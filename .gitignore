@@ -1,0 +1,6 @@
+message-service-params.txt
+*.yaml
+nginx/*.yaml
+mongodb
+demoapp
+app/tc-fkb-message-api/node_modules

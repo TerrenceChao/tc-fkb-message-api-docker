@@ -1,0 +1,4 @@
+./tc-fkb-message-api/test
+./tc-fkb-message-api/node_modules
+./tc-fkb-message-api/.env
+./Dockerfile
