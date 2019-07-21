@@ -1,0 +1,18 @@
+config:
+  target: 'http://localhost:8082'
+  phases:
+    - duration: 3
+      arrivalRate: 600
+      # rampTo: 1000
+  defaults:
+    headers:
+      x-auth-id: ''
+      x-service-signature: '987401838271002188298567'
+      # x-my-service-auth: '987401838271002188298567'
+      x-request-id: ''
+      uid: '345b1c4c-128c-4286-8431-78d16d285f38'
+      clientuseragent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
+scenarios:
+  - flow:
+    - get:
+        url: '/message_service/v1/req_authentication_authenticate'

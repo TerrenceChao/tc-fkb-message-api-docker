@@ -32,11 +32,63 @@ services:
     volumes:
       - ./nginx:/etc/nginx/conf.d
     links:
-      - app
+      - app-1
+      - app-2
+      - app-3
     ports:
       - 8082:8082
   
-  app:
+  app-1:
+    build:
+      context: ./app
+    restart: always
+    tty: true
+    links:
+      - database-nosql
+    environment:
+     - "NODE_ENV=${NODE_ENV}"
+     - "SERVER_PORT=${SERVER_PORT}"
+    # auth
+     - "AUTH_ATTRIBUTES=${AUTH_ATTRIBUTES}"
+     - "HASH_ALGORITHM=${HASH_ALGORITHM}"
+     - "EXPIRES_IN=${EXPIRES_IN}"
+    # redis
+     - "ADAPTOR_HOST=adaptor"
+     - "ADAPTOR_PORT=${ADAPTOR_PORT}"
+    # mongodb
+     - "MONGODB_HOST=mongodb://database-nosql:${MONGODB_PORT}/FakebookMessenger"
+     - "MONGODB_RECONNECT_INTERVAL=${MONGODB_RECONNECT_INTERVAL}"
+     - "MONGODB_POOL_SIZE=${MONGODB_POOL_SIZE}"
+     - "MONGODB_WRITE_CONCERN_W=${MONGODB_WRITE_CONCERN_W}"
+     - "MONGODB_WRITE_CONCERN_J=${MONGODB_WRITE_CONCERN_J}"
+     - "MONGODB_WRITE_CONCERN_WTIMEOUT=${MONGODB_WRITE_CONCERN_WTIMEOUT}"
+
+  app-2:
+    build:
+      context: ./app
+    restart: always
+    tty: true
+    links:
+      - database-nosql
+    environment:
+     - "NODE_ENV=${NODE_ENV}"
+     - "SERVER_PORT=${SERVER_PORT}"
+    # auth
+     - "AUTH_ATTRIBUTES=${AUTH_ATTRIBUTES}"
+     - "HASH_ALGORITHM=${HASH_ALGORITHM}"
+     - "EXPIRES_IN=${EXPIRES_IN}"
+    # redis
+     - "ADAPTOR_HOST=adaptor"
+     - "ADAPTOR_PORT=${ADAPTOR_PORT}"
+    # mongodb
+     - "MONGODB_HOST=mongodb://database-nosql:${MONGODB_PORT}/FakebookMessenger"
+     - "MONGODB_RECONNECT_INTERVAL=${MONGODB_RECONNECT_INTERVAL}"
+     - "MONGODB_POOL_SIZE=${MONGODB_POOL_SIZE}"
+     - "MONGODB_WRITE_CONCERN_W=${MONGODB_WRITE_CONCERN_W}"
+     - "MONGODB_WRITE_CONCERN_J=${MONGODB_WRITE_CONCERN_J}"
+     - "MONGODB_WRITE_CONCERN_WTIMEOUT=${MONGODB_WRITE_CONCERN_WTIMEOUT}"
+
+  app-3:
     build:
       context: ./app
     restart: always
