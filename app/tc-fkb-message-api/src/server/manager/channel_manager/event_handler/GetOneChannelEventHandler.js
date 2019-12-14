@@ -11,47 +11,41 @@ const RES_META = require(path.join(config.get('src.property'), 'messageStatus'))
 var ResponseInfo = require(path.join(config.get('src.manager'), 'ResponseInfo'))
 var EventHandler = require(path.join(config.get('src.manager'), 'EventHandler'))
 
-const CHANNEL_REMOVED_SUCCESS = RES_META.CHANNEL_REMOVED_SUCCESS
-var respondErr = RES_META.REMOVE_CHANNEL_ERR
+const GET_ONE_CHANNEL_SUCCESS = RES_META.GET_ONE_CHANNEL_SUCCESS
+var respondErr = RES_META.GET_ONE_CHANNEL_ERR
 
-util.inherits(RemoveChannelEventHandler, EventHandler)
+util.inherits(GetOneChannelEventHandler, EventHandler)
 
-function RemoveChannelEventHandler () {
+function GetOneChannelEventHandler () {
   this.name = arguments.callee.name
 }
 
-RemoveChannelEventHandler.prototype.eventName = EVENTS.REMOVE_CHANNEL
+GetOneChannelEventHandler.prototype.eventName = EVENTS.GET_ONE_CHANNEL
 
-RemoveChannelEventHandler.prototype.handle = function (requestInfo) {
+GetOneChannelEventHandler.prototype.handle = function (requestInfo) {
   var storageService = this.globalContext.storageService
+  var uid = requestInfo.packet.uid
   var chid = requestInfo.packet.chid
-  var query = {
-    chid
-  }
 
-  Promise.resolve(storageService.channelInfoRemoved(query))
-    .then(confirm => this.notifyUser(requestInfo),
+  Promise.resolve(storageService.getUserChannelInfo({ uid, chid }))
+    .then(channelInfo => this.sendChInfo(channelInfo, requestInfo),
       err => this.alertException(respondErr(err), requestInfo))
 }
 
-RemoveChannelEventHandler.prototype.notifyUser = function (requestInfo) {
+GetOneChannelEventHandler.prototype.sendChInfo = function (channelInfo, requestInfo) {
   var businessEvent = this.globalContext.businessEvent
-  var packet = requestInfo.packet
-  var uid = packet.uid
-  var chid = packet.chid
-
   var resInfo = new ResponseInfo()
     .assignProtocol(requestInfo)
     .setHeader({
       to: TO.USER,
-      receiver: uid,
-      responseEvent: RESPONSE_EVENTS.CHANNEL_REMOVED
+      receiver: requestInfo.packet.uid,
+      responseEvent: RESPONSE_EVENTS.SPECIFIED_CHANNEL
     })
-    .responsePacket({ chid }, CHANNEL_REMOVED_SUCCESS)
+    .responsePacket(channelInfo, GET_ONE_CHANNEL_SUCCESS)
 
   businessEvent.emit(EVENTS.SEND_MESSAGE, resInfo)
 }
 
 module.exports = {
-  handler: new RemoveChannelEventHandler()
+  handler: new GetOneChannelEventHandler()
 }
